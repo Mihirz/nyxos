@@ -1,0 +1,20 @@
+{
+  "name": "callbacks-bridge",
+  "displayName": "Callbacks Bridge",
+  "description": "Lets the Callbacks voice operator read and move around the editor precisely (line numbers, diagnostics, edits).",
+  "version": "0.1.0",
+  "publisher": "callbacks",
+  "license": "MIT",
+  "repository": { "type": "git", "url": "https://github.com/Mihirz/callbacks" },
+  "engines": { "vscode": "^1.80.0" },
+  "activationEvents": ["onStartupFinished"],
+  "main": "./extension.js",
+  "contributes": {
+    "configuration": {
+      "title": "Callbacks Bridge",
+      "properties": {
+        "callbacks.port": { "type": "number", "default": 47100, "description": "Localhost port for the Callbacks bridge." }
+      }
+    }
+  }
+}
