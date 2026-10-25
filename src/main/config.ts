@@ -1,4 +1,5 @@
 import { config as loadEnv } from 'dotenv';
+import { readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { app } from 'electron';
 
@@ -8,6 +9,8 @@ const env = (k: string, d = '') => process.env[k]?.trim() || d;
 
 export const config = {
   anthropicKey: env('ANTHROPIC_API_KEY'),
+  // Haiku answers first and escalates to the strong model when a request needs it.
+  claudeFastModel: env('CLAUDE_FAST_MODEL', 'claude-haiku-5-5'),
   claudeModel: env('CLAUDE_MODEL', 'claude-opus-5-5'),
   claudeEffort: env('CLAUDE_EFFORT', 'low') as 'low' | 'medium' | 'high',
   geminiKey: env('GEMINI_API_KEY'),
@@ -25,21 +28,46 @@ export const config = {
   editorBridgePort: Number(env('EDITOR_BRIDGE_PORT', '47100')),
 };
 
+export type VoiceProvider = 'cartesia' | 'elevenlabs';
+
+/** Providers that failed for credits or keys this session: skipped until switched to again. */
+export const exhausted = new Set<string>();
+
+/** Switch speaking and listening to a provider, and remember it in .env for the next launch. */
+export function setVoiceProvider(p: VoiceProvider): boolean {
+  if (p === 'cartesia' ? !config.cartesiaKey : !config.elevenKey) return false;
+  config.ttsProvider = p;
+  config.sttProvider = p;
+  exhausted.delete(p);
+  try {
+    const file = path.join(app.getAppPath(), '.env');
+    let s = readFileSync(file, 'utf8');
+    for (const [k, v] of [['TTS_PROVIDER', p], ['STT_PROVIDER', p]]) s = new RegExp(`^${k}=.*$`, 'm').test(s) ? s.replace(new RegExp(`^${k}=.*$`, 'm'), `${k}=${v}`) : `${s}\n${k}=${v}`;
+    writeFileSync(file, s);
+  } catch { /* remembered for this session only */ }
+  return true;
+}
+
 /** Resolve the provider actually usable given which keys exist. */
+const usable = (p: string) => !exhausted.has(p) && (p === 'cartesia' ? Boolean(config.cartesiaKey) : p === 'elevenlabs' ? Boolean(config.elevenKey) : false);
+
 export function effectiveTts(): 'cartesia' | 'elevenlabs' | 'say' {
-  if (config.ttsProvider === 'cartesia' && config.cartesiaKey) return 'cartesia';
-  if (config.ttsProvider === 'elevenlabs' && config.elevenKey) return 'elevenlabs';
-  if (config.ttsProvider !== 'say') {
-    if (config.cartesiaKey) return 'cartesia';
-    if (config.elevenKey) return 'elevenlabs';
-  }
+  if (config.ttsProvider === 'say') return 'say';
+  if (usable(config.ttsProvider)) return config.ttsProvider as VoiceProvider;
+  if (usable('cartesia')) return 'cartesia';
+  if (usable('elevenlabs')) return 'elevenlabs';
   return 'say';
 }
 
 export function effectiveStt(): 'cartesia' | 'elevenlabs' | 'none' {
-  if (config.sttProvider === 'cartesia' && config.cartesiaKey) return 'cartesia';
-  if (config.sttProvider === 'elevenlabs' && config.elevenKey) return 'elevenlabs';
-  if (config.cartesiaKey) return 'cartesia';
-  if (config.elevenKey) return 'elevenlabs';
+  if (usable(config.sttProvider)) return config.sttProvider;
+  if (usable('cartesia')) return 'cartesia';
+  if (usable('elevenlabs')) return 'elevenlabs';
   return 'none';
 }
+
+/**
+ * A credit/key failure (switch provider): 401 unauthorized, 402 payment required, or a 429 that
+ * says credits/quota/balance. A 429 for too many requests at once is not: that just retries.
+ */
+export const isQuotaError = (status: number, body: string) => status === 401 || status === 402 || (status === 429 && /credit|quota|insufficient|balance|payment|billing/i.test(body));

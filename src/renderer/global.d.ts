@@ -1,8 +1,8 @@
-import type { CallbacksApi } from '../preload/index';
+import type { NyxApi } from '../preload/index';
 
 declare global {
   interface Window {
-    callbacks: CallbacksApi;
+    nyx: NyxApi;
   }
 }
 

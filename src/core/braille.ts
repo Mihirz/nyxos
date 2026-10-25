@@ -2,7 +2,7 @@
 //
 // Grade 1 is letter-for-letter. Grade 2 here applies the common UEB wordsigns and
 // strong groupsigns, enough to be recognizably contracted, not a certified
-// transcriber. Every string Callbacks speaks is also pushed through this pipeline
+// transcriber. Every string nyxOS speaks is also pushed through this pipeline
 // to whatever BrailleDriver is attached (the on-screen virtual display by default).
 
 const dots = (...ds: number[]) => String.fromCharCode(0x2800 + ds.reduce((acc, d) => acc | (1 << (d - 1)), 0));
@@ -98,6 +98,32 @@ export function cellDots(cell: string): boolean[] {
 }
 
 /** Split braille text into fixed-width display rows (refreshable displays are 14–80 cells). */
+/**
+ * Break text into display lines of whole words whose braille fits the display, each paired with
+ * its print, so a sighted helper can read along with exactly what the cells show.
+ */
+export function brailleLines(text: string, cells = 40, grade: 1 | 2 = 2): Array<{ print: string; braille: string }> {
+  const lines: Array<{ print: string; braille: string }> = [];
+  let cur = '';
+  const push = () => { if (cur) lines.push({ print: cur, braille: toBraille(cur, grade) }); cur = ''; };
+  for (const word of text.replace(/\s+/g, ' ').trim().split(' ')) {
+    const next = cur ? `${cur} ${word}` : word;
+    if (toBraille(next, grade).length <= cells) { cur = next; continue; }
+    push();
+    // A single word longer than the display is split across lines.
+    let w = word;
+    while (toBraille(w, grade).length > cells) {
+      let n = w.length;
+      while (n > 1 && toBraille(w.slice(0, n), grade).length > cells) n--;
+      lines.push({ print: w.slice(0, n), braille: toBraille(w.slice(0, n), grade) });
+      w = w.slice(n);
+    }
+    cur = w;
+  }
+  push();
+  return lines.length ? lines : [{ print: '', braille: '' }];
+}
+
 export function paginate(braille: string, cells = 40): string[] {
   const rows: string[] = [];
   for (const line of braille.split('\n')) {

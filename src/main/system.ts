@@ -28,35 +28,41 @@ export function installedApps(): string[] {
   return (appCache = [...names]);
 }
 
-const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9 ]/g, '').replace(/\s+/g, ' ').trim();
+// Accents don't matter when matching what was said ("mobius" → "Möbius").
+const norm = (s: string) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9 ]/g, '').replace(/\s+/g, ' ').trim();
 
-/** Best fuzzy match of a spoken name against candidates. */
-export function fuzzyPick<T>(query: string, items: T[], key: (t: T) => string): T | null {
-  const q = norm(query);
-  if (!q) return null;
-  let best: T | null = null, bestScore = 0;
-  for (const it of items) {
-    const k = norm(key(it));
-    if (!k) continue;
-    let score = 0;
-    if (k === q) score = 100;
-    else if (k.startsWith(q)) score = 80;
-    else if (k.split(' ').some((w) => w.startsWith(q))) score = 70;
-    else if (k.includes(q)) score = 60;
-    else {
-      const qw = q.split(' ');
-      const hits = qw.filter((w) => k.includes(w)).length;
-      if (hits) score = 40 * (hits / qw.length);
-    }
-    if (score > bestScore) { bestScore = score; best = it; }
-  }
-  return bestScore >= 30 ? best : null;
+/** 100 exact, 80 prefix, 70 word prefix, 60 substring, up to 40 for partial word overlap. */
+export function fuzzyScore(query: string, candidate: string): number {
+  const q = norm(query), k = norm(candidate);
+  if (!q || !k) return 0;
+  if (k === q) return 100;
+  if (k.startsWith(q)) return 80;
+  if (k.split(' ').some((w) => w.startsWith(q))) return 70;
+  if (k.includes(q)) return 60;
+  const qw = q.split(' ');
+  const hits = qw.filter((w) => k.includes(w)).length;
+  return hits ? 40 * (hits / qw.length) : 0;
 }
 
-export function resolveApp(spoken: string): string | null {
+/** Best fuzzy match of a spoken name against candidates. */
+export function fuzzyPick<T>(query: string, items: T[], key: (t: T) => string, min = 30): T | null {
+  let best: T | null = null, bestScore = 0;
+  for (const it of items) {
+    const score = fuzzyScore(query, key(it));
+    if (score > bestScore) { bestScore = score; best = it; }
+  }
+  return bestScore >= min ? best : null;
+}
+
+export function resolveApp(spoken: string, min = 30): string | null {
   const alias = ALIASES[norm(spoken)];
   if (alias) return alias;
-  return fuzzyPick(spoken, installedApps(), (a) => a);
+  return fuzzyPick(spoken, installedApps(), (a) => a, min);
+}
+
+/** Only an alias or an installed app whose name is exactly what was said. */
+export function exactApp(spoken: string): string | null {
+  return ALIASES[norm(spoken)] ?? installedApps().find((a) => norm(a) === norm(spoken)) ?? null;
 }
 
 /** Prefer switching to an existing window over launching. Returns a description of what happened. */

@@ -1,20 +1,21 @@
-// A virtual refreshable braille display: 40 cells, 8 dots each, mirroring every
-// word Callbacks speaks. Pan left/right with the arrows, like the thumb keys on
-// a real Focus/Brailliant display.
+// A virtual refreshable braille display: 40 cells, 8 dots each, showing a condensed form of
+// what's on screen (the page and its options). Pan with the arrows, like the thumb keys on a
+// real Focus/Brailliant display. Under the cells, the same line in print, for sighted helpers.
 
-import { useEffect, useState } from 'react';
-import { cellDots, paginate } from '../../core/braille';
+import { useEffect, useMemo, useState } from 'react';
+import { brailleLines, cellDots } from '../../core/braille';
 import { BrailleIcon } from './Icons';
 
 const CELLS = 40;
 // Dot layout in a cell: 1 4 / 2 5 / 3 6 / 7 8
 const ORDER = [0, 3, 1, 4, 2, 5, 6, 7];
 
-export function BrailleDisplay({ braille, text }: { braille: string; text: string }) {
-  const rows = paginate(braille || '⠀', CELLS);
+export function BrailleDisplay({ text }: { text: string }) {
+  const rows = useMemo(() => brailleLines(text || ' ', CELLS), [text]);
   const [row, setRow] = useState(0);
-  useEffect(() => setRow(0), [braille]);
-  const cells = [...(rows[row] ?? '')];
+  useEffect(() => setRow(0), [text]);
+  const line = rows[Math.min(row, rows.length - 1)];
+  const cells = [...line.braille.padEnd(CELLS, '⠀')].slice(0, CELLS);
 
   return (
     <section className="braille" aria-label="Braille display">
@@ -37,7 +38,7 @@ export function BrailleDisplay({ braille, text }: { braille: string; text: strin
           );
         })}
       </div>
-      <div className="braille-text" aria-hidden>{text}</div>
+      <div className="braille-print" aria-hidden>{line.print}</div>
     </section>
   );
 }

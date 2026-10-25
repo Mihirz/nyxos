@@ -33,3 +33,9 @@ export const FollowIcon = () => (
 export const BrailleIcon = () => (
   <svg viewBox="0 0 48 48" aria-hidden>{[[16, 10], [16, 24], [32, 10], [32, 38], [16, 38]].map(([x, y], i) => <circle key={i} cx={x} cy={y} r="5" fill="currentColor" />)}</svg>
 );
+export const KeyboardIcon = () => (
+  <svg viewBox="0 0 48 48" aria-hidden><rect x="4" y="12" width="40" height="24" rx="4" {...S} /><path d="M12 20h0M20 20h0M28 20h0M36 20h0M14 28h20" {...S} /></svg>
+);
+export const MoonIcon = () => (
+  <svg viewBox="0 0 48 48" aria-hidden><path d="M33 6a18 18 0 1 0 9 26A15 15 0 0 1 33 6z" {...S} fill="currentColor" fillOpacity=".18" /><path d="M39 10l1.2 2.8L43 14l-2.8 1.2L39 18l-1.2-2.8L35 14l2.8-1.2z" {...S} strokeWidth={2} /></svg>
+);

@@ -1,5 +1,5 @@
 // Screen curtain: black out every display (privacy + it proves nobody is peeking).
-// Callbacks keeps working underneath, because it never relied on pixels.
+// nyxOS keeps working underneath, because it never relied on pixels.
 
 import { BrowserWindow, screen } from 'electron';
 

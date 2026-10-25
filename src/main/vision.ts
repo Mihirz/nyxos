@@ -20,7 +20,7 @@ Mark anything that looks focused or selected with [FOCUSED]. Do not describe col
 Be literal and complete; do not summarize away text. No markdown tables.`;
 
 async function screenshot(): Promise<string> {
-  const file = path.join(os.tmpdir(), `callbacks-${Date.now()}.jpg`);
+  const file = path.join(os.tmpdir(), `nyx-${Date.now()}.jpg`);
   await shell('screencapture', ['-x', '-t', 'jpg', file]);
   // Downscale: faster upload, and vision models don't need retina pixels.
   await shell('sips', ['-Z', '1800', file]).catch(() => undefined);

@@ -1,7 +1,7 @@
 {
   "name": "callbacks-bridge",
-  "displayName": "Callbacks Bridge",
-  "description": "Lets the Callbacks voice operator read and move around the editor precisely (line numbers, diagnostics, edits).",
+  "displayName": "nyxOS Bridge",
+  "description": "Lets the nyxOS voice operator read and move around the editor precisely (line numbers, diagnostics, edits).",
   "version": "0.1.0",
   "publisher": "callbacks",
   "license": "MIT",
@@ -11,9 +11,9 @@
   "main": "./extension.js",
   "contributes": {
     "configuration": {
-      "title": "Callbacks Bridge",
+      "title": "nyxOS Bridge",
       "properties": {
-        "callbacks.port": { "type": "number", "default": 47100, "description": "Localhost port for the Callbacks bridge." }
+        "callbacks.port": { "type": "number", "default": 47100, "description": "Localhost port for the nyxOS bridge." }
       }
     }
   }

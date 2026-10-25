@@ -1,4 +1,4 @@
-// axhelper — tiny macOS Accessibility (AX) bridge for Callbacks.
+// axhelper — tiny macOS Accessibility (AX) bridge for nyxOS.
 //
 // AppleScript/JXA can walk the UI tree but every attribute read is an Apple Event,
 // which makes "what's on screen" take seconds. Talking to AXUIElement directly is

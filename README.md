@@ -1,10 +1,10 @@
-# Callbacks
+# nyxOS
 
 **A voice-and-keystroke operator for blind and low-vision computer users. You drive; it's your hands and eyes.**
 
-Most "AI agents" take a goal and go do it for you ("build me a website"). That's the wrong shape for someone who just can't see the screen. They don't need a replacement; they need to do the work themselves, at the speed a sighted person does. Callbacks takes the *steps* a sighted user takes with a mouse and keyboard ("open VS Code", "go to line 39", "type this", "click sign up") and runs them instantly. When something is on screen, it tells you what matters, ordered from window to region to item, instead of reading every pixel in order.
+Most "AI agents" take a goal and go do it for you ("build me a website"). That's the wrong shape for someone who just can't see the screen. They don't need a replacement; they need to do the work themselves, at the speed a sighted person does. nyxOS takes the *steps* a sighted user takes with a mouse and keyboard ("open VS Code", "go to line 39", "type this", "click sign up") and runs them instantly. When something is on screen, it tells you what matters, ordered from window to region to item, instead of reading every pixel in order.
 
-> Built at Cal Hacks 13.0 for **blind and low-vision developers and knowledge workers**. Today's screen readers (VoiceOver, NVDA, JAWS) are powerful but linear: reaching one button can take dozens of swipes or memorized key chords. Callbacks lets you say where you want to go.
+> Built at Cal Hacks 13.0 for **blind and low-vision developers and knowledge workers**. Today's screen readers (VoiceOver, NVDA, JAWS) are powerful but linear: reaching one button can take dozens of swipes or memorized key chords. nyxOS lets you say where you want to go.
 
 ## What it does
 
@@ -42,7 +42,7 @@ npm test                      # grammar + braille unit tests
 
 macOS permissions (System Settings → Privacy & Security): **Accessibility** (control apps, read the UI tree), **Microphone**, **Screen Recording** (vision fallback only), **Full Disk Access** (unread messages only). In dev, grant these to your terminal.
 
-**Hotkeys:** `⌥ Space` anywhere toggles listening (auto-stops when you stop talking). `⌥ ⇧ Space` jumps to the typed command bar. In the Callbacks window, hold `Space` to talk, `Esc` to silence, `1`–`9` to pick.
+**Hotkeys:** `⌥ Space` anywhere toggles listening (auto-stops when you stop talking). `⌥ ⇧ Space` jumps to the typed command bar. In the nyxOS window, hold `Space` to talk, `Esc` to silence, `1`–`9` to pick.
 
 With no keys at all it still works: typed commands, the instant grammar, the Lens, and macOS `say` for speech.
 

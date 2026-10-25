@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>#launch - Tandem team chat</title>
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    .chat { max-width: 640px; margin: 24px auto; font-family: system-ui, sans-serif; }
+    .msg { padding: 8px 0; border-bottom: 1px solid #eee; }
+    .msg b { margin-right: 6px; }
+    .typing { color: #888; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <main class="chat">
+    <h1>#launch</h1>
+    <!-- Watch-mode test: new messages are appended every few seconds, like Discord or Slack. -->
+    <ol id="log" aria-live="polite" style="list-style: none; padding: 0">
+      <li class="msg"><b>Priya</b>Morning! Launch checklist is in the doc.</li>
+      <li class="msg"><b>Sam</b>I'll take the landing page bug.</li>
+    </ol>
+    <p class="typing" id="typing">3 people online · 12 seconds ago</p>
+  </main>
+  <script>
+    const incoming = [
+      ['Priya', 'Is the join the beta button fixed yet? Judges are testing it now.'],
+      ['Sam', 'Pushing the fix in two minutes, the link said singup instead of signup.'],
+      ['Alex', 'Pizza is here, come grab some before it is gone.'],
+    ];
+    let i = 0;
+    // Updates that replace text (like a "last seen" timer) must not be announced; appends should.
+    setInterval(() => { document.getElementById('typing').textContent = `3 people online · ${Math.floor(Math.random() * 60)} seconds ago`; }, 1000);
+    setInterval(() => {
+      if (i >= incoming.length) return;
+      const [who, text] = incoming[i++];
+      const li = document.createElement('li');
+      li.className = 'msg';
+      li.innerHTML = `<b>${who}</b>${text}`;
+      document.getElementById('log').appendChild(li);
+    }, 9000);
+  </script>
+</body>
+</html>

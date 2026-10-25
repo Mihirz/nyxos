@@ -1,0 +1,12 @@
+# Build-time config filled from ../.env: contains API keys. Never commit.
+Config/Secrets.plist
+Config/Secrets.plist.tmp
+Config/*.xcconfig
+# Generated project and build outputs
+nyxOS.xcodeproj/
+build/
+build-device/
+DerivedData/
+*.xcuserstate
+xcuserdata/
+screenshots/*.tmp.png

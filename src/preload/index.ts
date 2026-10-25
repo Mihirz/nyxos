@@ -11,6 +11,7 @@ const api = {
   sendUtterance: (data: ArrayBuffer, mime: string) => ipcRenderer.invoke('audio:utterance', data, mime),
   setStatus: (s: string) => ipcRenderer.send('status', s),
   audioEnded: () => ipcRenderer.send('audio:ended'),
+  interrupted: (p: { fraction: number | null; seg?: number; len?: number }) => ipcRenderer.send('audio:interrupted', p),
   setView: (v: string) => ipcRenderer.send('view', v),
   stop: () => ipcRenderer.send('stop'),
   rpcRespond: (msg: { id: number; result?: unknown; error?: string }) => ipcRenderer.send('rpc:response', msg),
@@ -23,7 +24,9 @@ const api = {
   onCommandFocus: on('command:focus'),
   onRpc: on('rpc:request'),
   onShortcodes: on('shortcodes'),
+  onEarcon: on('earcon'),
+  testRun: Boolean(process.env.NYX_SCRIPT),
 };
 
-contextBridge.exposeInMainWorld('callbacks', api);
-export type CallbacksApi = typeof api;
+contextBridge.exposeInMainWorld('nyx', api);
+export type NyxApi = typeof api;

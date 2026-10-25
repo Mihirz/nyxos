@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Packages and installs the Callbacks Bridge extension into VS Code (or Cursor).
+# Packages and installs the nyxOS Bridge extension into VS Code (or Cursor).
 set -euo pipefail
 cd "$(dirname "$0")/../integrations/vscode-bridge"
 npx --yes @vscode/vsce package --allow-missing-repository --skip-license -o callbacks-bridge.vsix

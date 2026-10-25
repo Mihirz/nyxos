@@ -9,14 +9,14 @@ Why this demo and not "text a friend": messaging alone has been done and it's to
 1. `npm run demo:site` (Tandem landing page at http://localhost:3000; "Join the beta" 404s because of a typo on `demo/acme-site/app.js:39`).
 2. VS Code open on `demo/acme-site` with the bridge installed (`npm run bridge:install`, then reload). Close other VS Code windows.
 3. Messages signed in on the demo laptop. Give a judge or teammate the demo phone number.
-4. Projector shows the **Callbacks window** (mirror only that window, or put it on the external display). The audience sees the transcript, the numbered options, and the braille display filling in. The laptop's own screen gets the curtain.
+4. Projector shows the **nyxOS window** (mirror only that window, or put it on the external display). The audience sees the transcript, the numbered options, and the braille display filling in. The laptop's own screen gets the curtain.
 5. `.env` has Anthropic + Cartesia (+ Gemini) keys. Speed set around 1.6× so the audience can follow; mention real users run 2-3×.
 
 ## Script (~2:00 total; the live flow is ~90s)
 
-**0:00 Hook (presenter, 15s).** "2.2 million Americans are blind. The tools they use read the screen one element at a time, like reading a book through a straw. Callbacks lets you say where you want to go. [Teammate] is going to fix a production bug. Blindfolded. With the screen off."
+**0:00 Hook (presenter, 15s).** "2.2 million Americans are blind. The tools they use read the screen one element at a time, like reading a book through a straw. nyxOS lets you say where you want to go. [Teammate] is going to fix a production bug. Blindfolded. With the screen off."
 
-Blindfold on. Say **"screen off"**. The laptop goes black and the projector keeps showing the Callbacks window. Start the timer on screen.
+Blindfold on. Say **"screen off"**. The laptop goes black and the projector keeps showing the nyxOS window. Start the timer on screen.
 
 **0:15 The bug report arrives (live).** A judge texts: *"the join the beta button is broken"* (ask them to word it however they like; unscripted is the point).
 - 🗣 **"unread messages"** → "One person. [Judge]: the join the beta button is broken. Say a number to hear a thread, or reply to a name."

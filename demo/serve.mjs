@@ -9,7 +9,7 @@ const types = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/cs
 
 createServer(async (req, res) => {
   const url = new URL(req.url, 'http://localhost');
-  const routes = { '/': 'index.html', '/signup': 'signup.html', '/thanks': 'thanks.html' };
+  const routes = { '/': 'index.html', '/signup': 'signup.html', '/thanks': 'thanks.html', '/chat': 'chat.html' };
   const file = routes[url.pathname] ?? url.pathname.slice(1);
   try {
     const body = await readFile(path.join(root, path.normalize(file)));

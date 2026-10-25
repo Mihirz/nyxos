@@ -1,5 +1,5 @@
 // iMessage / SMS via the local Messages database (read) and AppleScript (send).
-// Reading chat.db requires Full Disk Access for the app running Callbacks.
+// Reading chat.db requires Full Disk Access for the app running nyxOS.
 
 import os from 'node:os';
 import path from 'node:path';
@@ -50,7 +50,7 @@ export async function unreadMessages(): Promise<Unread[]> {
   } catch (e) {
     const msg = String((e as Error).message);
     if (/authorization denied|unable to open/i.test(msg)) {
-      throw new Error('I need Full Disk Access to read Messages. Open System Settings, Privacy and Security, Full Disk Access, and allow Callbacks or your terminal.');
+      throw new Error('I need Full Disk Access to read Messages. Open System Settings, Privacy and Security, Full Disk Access, and allow nyxOS or your terminal.');
     }
     throw e;
   }
@@ -114,3 +114,35 @@ export async function sendMessage(to: string, text: string): Promise<void> {
     end tell`;
   await osascript(script, 'AppleScript', 8000);
 }
+
+export interface ContactMatch { name: string; handles: string[] }
+
+/** People in Contacts whose name contains the spoken name, with their phones (mobile first) and emails. */
+export async function findContacts(spoken: string): Promise<ContactMatch[]> {
+  const script = `
+    tell application "Contacts"
+      set out to ""
+      repeat with p in (every person whose name contains "${esc(spoken)}")
+        set nm to name of p
+        repeat with ph in phones of p
+          set out to out & nm & tab & (label of ph as text) & tab & (value of ph) & linefeed
+        end repeat
+        repeat with em in emails of p
+          set out to out & nm & tab & "email" & tab & (value of em) & linefeed
+        end repeat
+      end repeat
+      return out
+    end tell`;
+  const raw = await osascript(script, 'AppleScript', 6000).catch(() => '');
+  const people = new Map<string, Array<{ label: string; value: string }>>();
+  for (const line of raw.split('\n')) {
+    const [name, label, value] = line.split('\t');
+    if (name && value) people.set(name, [...(people.get(name) ?? []), { label: label ?? '', value: value.trim() }]);
+  }
+  return [...people].map(([name, hs]) => ({
+    name,
+    handles: hs.sort((a, b) => Number(/mobile|iphone/i.test(b.label)) - Number(/mobile|iphone/i.test(a.label))).map((h) => h.value),
+  }));
+}
+
+export const isHandle = (s: string) => /@/.test(s) || /^[+\d][\d\s().-]{6,}$/.test(s.trim());

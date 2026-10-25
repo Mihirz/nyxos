@@ -1,5 +1,5 @@
-// Callbacks Bridge: a localhost-only JSON API over the active editor.
-// Screen readers see VS Code's editor as a partial textarea; this gives Callbacks
+// nyxOS Bridge: a localhost-only JSON API over the active editor.
+// Screen readers see VS Code's editor as a partial textarea; this gives nyxOS
 // exact line numbers, the real file contents, diagnostics, and edit events.
 
 const vscode = require('vscode');
@@ -118,7 +118,7 @@ const routes = {
 
 function activate(context) {
   // Each VS Code window runs its own extension host. Every window takes the first
-  // free port in [base, base+9]; Callbacks asks them all and talks to the focused one.
+  // free port in [base, base+9]; nyxOS asks them all and talks to the focused one.
   const base = vscode.workspace.getConfiguration('callbacks').get('port', 47100);
   server = http.createServer(async (req, res) => {
     const url = new URL(req.url, 'http://localhost');
@@ -143,7 +143,7 @@ function activate(context) {
   });
   server.listen(port, '127.0.0.1');
 
-  // Edit events feed Callbacks' "follow mode": it reads back lines as you finish them.
+  // Edit events feed nyxOS' "follow mode": it reads back lines as you finish them.
   context.subscriptions.push(
     vscode.workspace.onDidChangeTextDocument((e) => {
       const ed = editor();
